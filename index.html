@@ -3,494 +3,1914 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Safe</title>
+<title>LSEC — CONTRÔLE RÉSEAU ÉLECTRIQUE</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&display=swap');
 
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body {
-  min-height:100vh;
-  background:
-    radial-gradient(800px 600px at 50% 0%, #1a2640 0%, transparent 65%),
-    radial-gradient(ellipse at center, #0d121d 0%, #06080d 80%);
-  font-family:'Inter',sans-serif; color:#dbe2ee;
-  display:flex; align-items:center; justify-content:center; padding:20px;
-  overflow:hidden;
-}
-
-.stage { position:relative; width:min(94vw, 360px); }
-
-/* ===== SAFE OUTER SHELL ===== */
-.safe {
-  position:relative; width:100%; padding:42px 22px 32px;
-  border-radius:18px;
-  background:linear-gradient(165deg, #2a3346 0%, #1a2236 50%, #0d1220 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(150,180,220,0.18),
-    inset 0 0 0 4px rgba(8,12,20,0.9),
-    inset 0 0 0 5px rgba(80,100,140,0.28),
-    inset 0 0 60px rgba(0,0,0,0.55),
-    0 30px 70px rgba(0,0,0,0.7),
-    0 0 0 1px rgba(0,0,0,0.5);
-  transition: box-shadow 0.8s;
-}
-.safe::before {
-  content:''; position:absolute; inset:0; border-radius:18px; pointer-events:none;
-  background:linear-gradient(110deg, transparent 30%, rgba(150,180,220,0.04) 50%, transparent 70%);
-}
-.safe.unlocked {
-  box-shadow:
-    inset 0 0 0 1px rgba(245,166,35,0.3),
-    inset 0 0 0 4px rgba(8,12,20,0.9),
-    inset 0 0 0 5px rgba(245,166,35,0.18),
-    inset 0 0 70px rgba(0,0,0,0.55),
-    0 30px 70px rgba(0,0,0,0.7),
-    0 0 60px rgba(245,166,35,0.18);
+:root {
+  --bg: #070a0e;
+  --panel: #0d1119;
+  --panel2: #111820;
+  --panel3: #0a0e15;
+  --border: #1a2436;
+  --border2: #243040;
+  --green: #00e87a;
+  --green2: #00ff99;
+  --green-dim: #00441e;
+  --green-glow: rgba(0,232,122,0.15);
+  --red: #ff2244;
+  --red2: #ff4466;
+  --red-dim: #440011;
+  --red-glow: rgba(255,34,68,0.15);
+  --orange: #ff8c00;
+  --orange-dim: rgba(255,140,0,0.12);
+  --yellow: #ffd000;
+  --blue: #0af;
+  --blue-dim: rgba(0,170,255,0.1);
+  --text: #b8cfe0;
+  --text2: #d8eaf5;
+  --text-dim: #3a5060;
+  --metal: #0f141c;
+  --metal2: #141d28;
+  --screw: #1e2a38;
+  --inset: #080b10;
 }
 
-/* corner bolts */
-.bolt {
-  position:absolute; width:16px; height:16px; border-radius:50%;
-  background:radial-gradient(circle at 35% 32%, #7a8aa3 5%, #3a4660 50%, #15203a 90%);
-  box-shadow:
-    inset 0 -1px 2px rgba(0,0,0,0.7),
-    inset 0 1px 1px rgba(255,255,255,0.15),
-    0 1px 2px rgba(0,0,0,0.4);
-  z-index:5;
-  transition: transform 0.55s cubic-bezier(0.45,0,0.4,1.3), box-shadow 0.5s;
-  transition-delay:0s;
-}
-.bolt::before {
-  content:''; position:absolute; inset:3px; border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #5a6580 5%, #1a2030 75%);
-  box-shadow:inset 0 -1px 1px rgba(0,0,0,0.5);
-}
-.bolt::after {
-  content:''; position:absolute; top:50%; left:24%; width:52%; height:1.5px;
-  background:rgba(0,0,0,0.65); transform:translateY(-50%); border-radius:1px;
-}
-.bolt.tl{top:9px;left:9px;} .bolt.tr{top:9px;right:9px;}
-.bolt.bl{bottom:9px;left:9px;} .bolt.br{bottom:9px;right:9px;}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-.safe.unlocking .bolt.tl { transition-delay:0s; }
-.safe.unlocking .bolt.tr { transition-delay:0.1s; }
-.safe.unlocking .bolt.br { transition-delay:0.2s; }
-.safe.unlocking .bolt.bl { transition-delay:0.3s; }
-.safe.unlocking .bolt {
-  transform: rotate(90deg) scale(1.15);
-  box-shadow:
-    inset 0 -1px 2px rgba(0,0,0,0.7),
-    inset 0 1px 1px rgba(255,255,255,0.15),
-    0 0 16px rgba(245,166,35,0.7),
-    0 0 4px rgba(245,166,35,0.9);
+body {
+  background: var(--bg);
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* brand plate */
-.brand {
-  position:absolute; top:14px; left:50%; transform:translateX(-50%); z-index:6;
-  padding:3px 12px; border-radius:3px;
-  background:linear-gradient(180deg, #2a3346 0%, #131a2b 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(150,180,220,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 1px 2px rgba(0,0,0,0.5);
-  font-family:'JetBrains Mono',monospace;
-  font-size:8px; letter-spacing:3px; color:#94a3b8; text-transform:uppercase;
-  display:flex; align-items:center; gap:8px;
-}
-.brand::before {
-  content:''; width:5px; height:5px; border-radius:50%;
-  background:#f5a623; box-shadow:0 0 6px rgba(245,166,35,0.7);
-  animation:bp 1.6s infinite; transition: background 0.4s, box-shadow 0.4s, animation 0.3s;
-}
-.safe.unlocked .brand::before { background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,0.85); animation-duration:0.6s; }
-@keyframes bp { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
-
-/* ===== INTERIOR (the chamber, behind the door) ===== */
-.interior {
-  position:relative;
-  border-radius:10px;
-  background:
-    radial-gradient(circle at 50% 50%, #0c1424 0%, #03070f 80%);
-  box-shadow:
-    inset 0 0 0 1px rgba(0,0,0,0.7),
-    inset 0 0 50px rgba(0,0,0,0.95);
-  min-height:380px;
-  overflow:hidden;
-  display:flex; align-items:center; justify-content:center;
-  z-index:1;
-}
-.interior::before {
-  content:''; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(circle at 50% 60%, rgba(245,166,35,0) 0%, rgba(245,166,35,0) 100%);
-  transition: background 1.2s 0.4s;
-}
-.safe.unlocked .interior::before {
-  background:radial-gradient(circle at 50% 60%, rgba(245,166,35,0.22) 0%, rgba(245,166,35,0) 70%);
+/* SCANLINES */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+  pointer-events: none;
+  z-index: 9999;
 }
 
-/* ===== DOOR (with keypad on it) ===== */
-.door {
-  position:absolute;
-  inset:32px 22px 22px;
-  border-radius:10px;
-  background:linear-gradient(180deg, #1f293f 0%, #131a2b 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(150,180,220,0.14),
-    inset 0 1px 0 rgba(255,255,255,0.04),
-    0 4px 14px rgba(0,0,0,0.4);
-  padding:22px 20px 16px;
-  z-index:5;
-  transform-origin:0% 50%;
-  transform: perspective(2000px) rotateY(0deg);
-  transition: transform 1.8s cubic-bezier(0.66, 0, 0.28, 1), filter 1s;
-  display:flex; flex-direction:column; align-items:center;
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
+.header {
+  background: linear-gradient(180deg, #0c1118 0%, #0a0f16 100%);
+  border-bottom: 1px solid var(--border2);
+  padding: 0 28px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.6);
 }
-.door::after {
-  content:''; position:absolute; inset:0; border-radius:10px; pointer-events:none;
-  background:linear-gradient(110deg, transparent 30%, rgba(150,180,220,0.05) 50%, transparent 70%);
-}
-.door.open {
-  transform: perspective(2000px) rotateY(-118deg);
-  filter: drop-shadow(-26px 14px 36px rgba(0,0,0,0.85));
-  pointer-events:none;
-}
-.door.shake { animation: shake 0.4s; }
-@keyframes shake { 0%,100%{transform:perspective(2000px) translateX(0) rotateY(0);} 20%{transform:perspective(2000px) translateX(-7px);} 40%{transform:perspective(2000px) translateX(7px);} 60%{transform:perspective(2000px) translateX(-4px);} 80%{transform:perspective(2000px) translateX(4px);} }
-
-/* door inner hinge line (left edge subtle line) */
-.door::before {
-  content:''; position:absolute; left:0; top:14%; bottom:14%; width:2px;
-  background:linear-gradient(180deg, transparent, rgba(255,255,255,0.08) 50%, transparent);
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--green) 30%, var(--blue) 70%, transparent 100%);
+  opacity: 0.25;
 }
 
-/* ===== KEYPAD CONTENT ===== */
-.label {
-  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:3px;
-  color:#566177; text-transform:uppercase; margin-bottom:12px;
+.hdr-left { display: flex; align-items: center; gap: 14px; }
+.hdr-icon {
+  width: 38px; height: 38px;
+  background: var(--metal2);
+  border: 1px solid var(--green-dim);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  position: relative;
+  box-shadow: 0 0 16px rgba(0,232,122,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.hdr-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--text2);
+  line-height: 1.1;
+}
+.hdr-sub {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  margin-top: 2px;
+}
+.hdr-sep {
+  width: 1px; height: 32px;
+  background: var(--border2);
+  margin: 0 6px;
 }
 
-.display {
-  width:100%; border-radius:9px; padding:13px;
-  background:#050810;
-  box-shadow: inset 0 0 22px rgba(0,0,0,0.85), inset 0 0 0 1px rgba(150,180,220,0.08);
-  display:flex; justify-content:center; gap:14px; margin-bottom:16px;
+.hdr-metrics {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
 }
-.dot {
-  width:13px; height:13px; border-radius:50%;
-  background:rgba(150,180,220,0.13);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,0.5);
-  transition: all 0.18s;
+.metric-chip {
+  background: var(--metal);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 12px;
+  text-align: center;
+  min-width: 64px;
 }
-.dot.on { background:#f5a623; box-shadow:0 0 12px rgba(245,166,35,0.6); transform:scale(1.05); }
-.dot.err { background:#f87171; box-shadow:0 0 12px rgba(248,113,113,0.7); animation:dotErr 0.4s; }
-.dot.good { background:#4ade80; box-shadow:0 0 16px rgba(74,222,128,0.95); animation:dotGood 0.5s cubic-bezier(0.3,1.5,0.5,1); }
-@keyframes dotErr { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
-@keyframes dotGood { 0%{transform:scale(0.6);} 60%{transform:scale(1.3);} 100%{transform:scale(1.05);} }
-.dot.next { animation: nextPulse 1.4s infinite; }
-@keyframes nextPulse {
-  0%,100% { transform:scale(1); background:rgba(150,180,220,0.13); }
-  50% { transform:scale(1.15); background:rgba(245,166,35,0.25); box-shadow: 0 0 8px rgba(245,166,35,0.3), inset 0 1px 1px rgba(0,0,0,0.5); }
+.metric-chip .val {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  display: block;
+  line-height: 1.2;
+  text-shadow: 0 0 10px rgba(0,232,122,0.4);
 }
-
-.keypad { width:100%; display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:12px; }
-.key {
-  aspect-ratio:1.25/1; border-radius:9px; border:1px solid rgba(150,180,220,0.13);
-  background:linear-gradient(180deg, #2c3650 0%, #1b2438 100%);
-  color:#dbe2ee;
-  font-family:'Inter',sans-serif; font-weight:600; font-size:18px;
-  cursor:pointer; transition: all 0.08s;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 4px rgba(0,0,0,0.35);
-  user-select:none; -webkit-user-select:none;
+.metric-chip .lbl {
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
 }
-.key:hover { background:linear-gradient(180deg, #36436a 0%, #20304c 100%); }
-.key:active, .key.pressed {
-  transform: translateY(1px);
-  background:linear-gradient(180deg, #1b2438 0%, #2c3650 100%);
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-}
-.key.act { font-size:14px; font-weight:500; }
-.key.clear { color:#f87171; }
-.key.back { color:#94a3b8; font-size:15px; }
-
-.status {
-  font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.5px;
-  color:#566177; text-transform:uppercase; text-align:center; min-height:14px;
-  transition: color 0.4s;
-}
-.status.bad { color:#f87171; } .status.good { color:#4ade80; } .status.work { color:#f5a623; }
-
-/* ===== NOTE inside interior, revealed after door opens ===== */
-.note-wrap {
-  position:absolute; inset:0;
-  display:flex; align-items:center; justify-content:center;
-  opacity:0; pointer-events:none;
-  transform: translateY(40px) scale(0.5);
-  transition: opacity 0.6s, transform 0.8s cubic-bezier(0.3,1.45,0.5,1);
-}
-.note-wrap.show { opacity:1; transform: translateY(0) scale(1); pointer-events:auto; }
-
-.note {
-  width:200px; padding:24px 18px;
-  border-radius:14px;
-  background:linear-gradient(165deg, #f7e9b3 0%, #e8c14b 60%, #b9871c 100%);
-  text-align:center; color:#3a2606;
-  display:flex; flex-direction:column; align-items:center; gap:8px;
-  cursor:pointer;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,244,200,0.5),
-    0 12px 30px rgba(0,0,0,0.5),
-    0 0 22px rgba(245,166,35,0.5);
-  transition: transform 0.2s;
-  animation: noteShow 1.6s infinite 0.6s;
-}
-.note:hover { transform:scale(1.05); animation:none; }
-@keyframes noteShow {
-  0%,100% { box-shadow: inset 0 0 0 1px rgba(255,244,200,0.55), 0 12px 30px rgba(0,0,0,0.5), 0 0 22px rgba(245,166,35,0.6); }
-  50%     { box-shadow: inset 0 0 0 1px rgba(255,255,230,0.95), 0 12px 30px rgba(0,0,0,0.5), 0 0 52px rgba(245,166,35,1.1); }
-}
-.note .icon { width:32px; height:32px; opacity:0.8; }
-.note .icon svg { width:100%; height:100%; display:block; }
-.note .title { font-weight:700; font-size:14px; letter-spacing:3px; text-transform:uppercase; }
-.note .sub { font-weight:500; font-size:10px; letter-spacing:2px; opacity:0.75; text-transform:uppercase; }
-
-/* sparks */
-@keyframes sparkle { 0%{transform:scale(0) rotate(0);opacity:1;} 100%{transform:scale(2) rotate(180deg);opacity:0;} }
-.spark { position:absolute; width:10px; height:10px; border-radius:50%; pointer-events:none; z-index:50;
-  background:radial-gradient(circle, #fff, #f5a623); animation:sparkle 0.9s ease-out forwards;
-  box-shadow:0 0 6px rgba(245,166,35,0.8); }
-
-/* flash */
-.flash {
-  position:absolute; inset:0; border-radius:10px; pointer-events:none;
-  background:radial-gradient(circle at 50% 50%, rgba(255,240,200,0.6) 0%, transparent 60%);
-  opacity:0; z-index:40;
-}
-.flash.fire { animation: flashAnim 0.7s ease-out forwards; }
-@keyframes flashAnim {
-  0% { opacity:0; transform:scale(0.4); }
-  30% { opacity:1; }
-  100% { opacity:0; transform:scale(1.4); }
+.clock-chip {
+  background: var(--metal);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 5px 16px;
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 3px;
+  text-shadow: 0 0 14px rgba(0,232,122,0.5);
+  display: flex;
+  align-items: center;
 }
 
-/* ===== MODAL ===== */
-.screen { position:fixed; inset:0; background:rgba(2,4,8,0.86); display:none; align-items:center; justify-content:center; z-index:400; backdrop-filter:blur(12px); padding:20px; }
-.screen.active { display:flex; animation:fade 0.3s; }
-@keyframes fade { from{opacity:0;} to{opacity:1;} }
-.modal {
-  width:100%; max-width:360px; border-radius:18px; position:relative;
-  background:linear-gradient(170deg, #f7e9b3 0%, #e8c14b 60%, #b9871c 100%);
-  padding:30px 26px 22px; text-align:center; color:#3a2606;
-  box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 50px rgba(245,166,35,0.3);
-  animation:pop 0.5s cubic-bezier(0.3,1.4,0.5,1);
+/* ══════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════ */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 300px;
+  gap: 14px;
+  padding: 14px;
+  max-width: 1440px;
+  margin: 0 auto;
 }
-@keyframes pop { from{transform:scale(0.7) translateY(20px);opacity:0;} to{transform:scale(1) translateY(0);opacity:1;} }
-.modal h2 { font-weight:700; font-size:12px; letter-spacing:3px; color:#5a3a08; text-transform:uppercase; margin-bottom:14px; }
-.modal .line { font-size:14px; color:#5a3a08; margin-bottom:6px; opacity:0.85; }
-.pwd { display:inline-block; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:24px; letter-spacing:2px; color:#3a2606; margin-top:6px;
-  padding:11px 22px; border-radius:10px; background:rgba(255,255,255,0.42); border:1px solid rgba(120,80,10,0.3); }
-.modal .sig { margin-top:18px; font-size:11px; color:#7a5510; font-style:italic; }
-.btn { margin-top:18px; padding:10px 24px; border:none; cursor:pointer; font-weight:600; font-size:11px;
-  letter-spacing:2px; text-transform:uppercase; color:#3a2606; border-radius:9px;
-  background:linear-gradient(180deg, #fff3c8, #e0ad48); box-shadow:0 5px 14px rgba(120,80,10,0.3); transition:all 0.12s; }
-.btn:hover { filter:brightness(1.06); transform:translateY(-1px); } .btn:active { transform:translateY(1px); }
+
+/* ══════════════════════════════════════════
+   PANELS
+══════════════════════════════════════════ */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.card::before, .card::after {
+  content: '';
+  position: absolute;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2a3848, #1a2434);
+  border: 1px solid var(--screw);
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.5);
+}
+.card::before { top: 7px; left: 7px; }
+.card::after { top: 7px; right: 7px; }
+
+.card-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+.card-title .dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.card-title .dot.orange { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+.card-title .dot.blue { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+
+/* ══════════════════════════════════════════
+   LEFT COLUMN
+══════════════════════════════════════════ */
+.left-col { display: flex; flex-direction: column; gap: 14px; }
+
+/* BREAKERS */
+.breakers { display: flex; flex-direction: column; gap: 7px; }
+.breaker {
+  background: var(--metal);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  user-select: none;
+}
+.breaker:hover { border-color: var(--border2); }
+.breaker.req-off { border-color: var(--red-dim); }
+.breaker.req-off.done { border-color: var(--green-dim); }
+.brk-info { flex: 1; }
+.brk-name { font-size: 11px; color: var(--text2); letter-spacing: 0.5px; }
+.brk-zone { font-size: 9px; color: var(--text-dim); letter-spacing: 1px; margin-top: 1px; }
+.brk-req {
+  font-size: 8px;
+  color: var(--red);
+  letter-spacing: 1px;
+  margin-top: 2px;
+  display: none;
+}
+.breaker.req-off .brk-req { display: block; }
+.breaker.req-off.done .brk-req { display: none; }
+
+/* TOGGLE */
+.toggle-wrap { position: relative; }
+.toggle {
+  width: 38px; height: 20px;
+  background: var(--red-dim);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  background: var(--red);
+  border-radius: 50%;
+  top: 1px; left: 1px;
+  transition: all 0.3s;
+  box-shadow: 0 0 8px var(--red), 0 2px 4px rgba(0,0,0,0.5);
+}
+.toggle.on { background: var(--green-dim); }
+.toggle.on::after {
+  left: 19px;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green), 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* GAUGES */
+.gauge-list { display: flex; flex-direction: column; gap: 10px; }
+.gauge-item {}
+.gauge-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.gauge-head .gval { font-family: 'Orbitron', monospace; font-size: 10px; }
+.gauge-head .gval.green { color: var(--green); }
+.gauge-head .gval.orange { color: var(--orange); }
+.gauge-head .gval.red { color: var(--red); }
+.gauge-track {
+  height: 6px;
+  background: var(--inset);
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.gauge-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1.4s ease;
+}
+.gauge-fill.green { background: linear-gradient(90deg, #004422, var(--green)); box-shadow: 2px 0 8px var(--green); }
+.gauge-fill.orange { background: linear-gradient(90deg, #552200, var(--orange)); box-shadow: 2px 0 8px var(--orange); }
+.gauge-fill.red { background: linear-gradient(90deg, #440011, var(--red)); box-shadow: 2px 0 8px var(--red); }
+
+/* QUICK ACTIONS */
+.qa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.qa-btn {
+  padding: 9px 6px;
+  border-radius: 4px;
+  border: 1px solid;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-align: center;
+  transition: all 0.15s;
+  user-select: none;
+  line-height: 1.4;
+}
+.qa-btn.b { background: var(--blue-dim); border-color: #0066aa; color: var(--blue); }
+.qa-btn.b:hover { background: rgba(0,170,255,0.18); box-shadow: 0 0 12px rgba(0,170,255,0.2); }
+.qa-btn.y { background: rgba(255,208,0,0.06); border-color: #886600; color: var(--yellow); }
+.qa-btn.y:hover { background: rgba(255,208,0,0.14); }
+.qa-btn.o { background: var(--orange-dim); border-color: #664400; color: var(--orange); }
+.qa-btn.o:hover { background: rgba(255,140,0,0.2); }
+.qa-btn.r { background: var(--red-glow); border-color: #660022; color: var(--red2); }
+.qa-btn.r:hover { background: rgba(255,34,68,0.2); }
+
+/* ══════════════════════════════════════════
+   CENTER COLUMN
+══════════════════════════════════════════ */
+.center-col { display: flex; flex-direction: column; gap: 14px; }
+
+/* MAP */
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  margin-top: 4px;
+}
+.map-cell {
+  aspect-ratio: 1;
+  background: var(--metal);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s;
+  user-select: none;
+}
+.map-cell.live {
+  border-color: rgba(0,232,122,0.25);
+  color: rgba(0,232,122,0.5);
+}
+.map-cell.live::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0,232,122,0.08) 0%, transparent 70%);
+  animation: cellPulse 3s infinite;
+}
+.map-cell.dead {
+  border-color: rgba(255,34,68,0.2);
+  color: rgba(255,34,68,0.3);
+  background: rgba(20,0,5,0.6);
+}
+.map-cell.hub {
+  border-color: rgba(0,170,255,0.4) !important;
+  background: rgba(0,40,80,0.4);
+  color: var(--blue);
+  font-size: 9px;
+  font-weight: bold;
+  cursor: default;
+}
+@keyframes cellPulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+/* CHECKLIST PREREQS */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--metal);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  transition: all 0.3s;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+.check-item.done {
+  border-color: var(--green-dim);
+  background: rgba(0,50,30,0.3);
+}
+.check-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  flex-shrink: 0;
+  transition: all 0.3s;
+  color: transparent;
+}
+.check-item.done .check-icon {
+  border-color: var(--green);
+  background: var(--green-dim);
+  color: var(--green);
+  box-shadow: 0 0 8px rgba(0,232,122,0.3);
+}
+.check-label { flex: 1; color: var(--text-dim); transition: color 0.3s; }
+.check-item.done .check-label { color: var(--text2); }
+.check-badge {
+  font-size: 8px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  background: var(--inset);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'Orbitron', monospace;
+  transition: all 0.3s;
+}
+.check-item.done .check-badge {
+  background: var(--green-dim);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* POWER STATION */
+.power-station {
+  background: linear-gradient(180deg, #0c1018 0%, #080c12 100%);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.02), 0 4px 40px rgba(0,0,0,0.5);
+}
+
+.power-status-display {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  padding: 10px 28px;
+  border-radius: 4px;
+  border: 1px solid;
+  transition: all 0.6s;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+.power-status-display::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+}
+.power-status-display.on {
+  color: var(--green2);
+  border-color: var(--green-dim);
+  background: rgba(0,255,100,0.05);
+  text-shadow: 0 0 20px rgba(0,255,136,0.7);
+  box-shadow: 0 0 30px rgba(0,255,100,0.08), inset 0 0 20px rgba(0,255,100,0.04);
+}
+.power-status-display.off {
+  color: var(--red2);
+  border-color: var(--red-dim);
+  background: rgba(255,0,50,0.05);
+  text-shadow: 0 0 20px rgba(255,34,68,0.7);
+  box-shadow: 0 0 30px rgba(255,0,50,0.08), inset 0 0 20px rgba(255,0,50,0.04);
+  animation: flickerOff 0.6s ease 1;
+}
+@keyframes flickerOff {
+  0%{opacity:1} 10%{opacity:.1} 20%{opacity:.8} 35%{opacity:.05} 50%{opacity:.9} 65%{opacity:.2} 80%{opacity:1} 100%{opacity:1}
+}
+
+/* INDICATOR LAMPS */
+.lamps-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.lamp-group { display: flex; align-items: center; gap: 7px; }
+.lamp {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid;
+  position: relative;
+  transition: all 0.3s;
+}
+.lamp::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+.lamp.green {
+  background: var(--green);
+  border-color: var(--green2);
+  box-shadow: 0 0 12px var(--green), 0 0 24px rgba(0,232,122,0.4);
+}
+.lamp.red-l {
+  background: var(--red);
+  border-color: var(--red2);
+  box-shadow: 0 0 12px var(--red), 0 0 24px rgba(255,34,68,0.4);
+  animation: lampBlink 0.9s infinite;
+}
+.lamp.dark {
+  background: #111820;
+  border-color: var(--border2);
+  box-shadow: none;
+}
+@keyframes lampBlink { 0%,100%{opacity:1} 50%{opacity:.15} }
+.lamp-lbl { font-size: 8px; color: var(--text-dim); letter-spacing: 1px; }
+
+/* ══════════════════════════════════════════
+   LEVER — GROS LEVIER INDUSTRIEL SVG
+══════════════════════════════════════════ */
+.lever-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.lever-svg-wrap {
+  position: relative;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.lever-svg-wrap:active { cursor: grabbing; }
+
+.lever-label-top, .lever-label-bot {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-align: center;
+}
+.lever-label-top { color: var(--green); text-shadow: 0 0 8px var(--green); }
+.lever-label-bot { color: var(--red); text-shadow: 0 0 8px var(--red); }
+
+.lever-locked-msg {
+  font-size: 10px;
+  color: var(--red);
+  letter-spacing: 2px;
+  text-align: center;
+  animation: blink 1.4s infinite;
+  display: none;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* CTA BUTTON */
+.start-seq-btn {
+  padding: 11px 28px;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+.start-seq-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+}
+.start-seq-btn.locked {
+  background: rgba(80,20,30,0.2);
+  border-color: #442233;
+  color: #552233;
+  cursor: not-allowed;
+}
+.start-seq-btn.ready-cut {
+  background: rgba(180,0,40,0.12);
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 20px rgba(255,34,68,0.1);
+}
+.start-seq-btn.ready-cut:hover {
+  background: rgba(180,0,40,0.25);
+  box-shadow: 0 0 30px rgba(255,34,68,0.25);
+}
+.start-seq-btn.ready-restore {
+  background: rgba(0,150,80,0.1);
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 20px rgba(0,232,122,0.1);
+}
+.start-seq-btn.ready-restore:hover {
+  background: rgba(0,150,80,0.2);
+  box-shadow: 0 0 30px rgba(0,232,122,0.2);
+}
+
+/* ══════════════════════════════════════════
+   RIGHT COLUMN
+══════════════════════════════════════════ */
+.right-col { display: flex; flex-direction: column; gap: 14px; }
+
+/* MANUAL */
+.manual-section { margin-bottom: 10px; }
+.manual-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 8px;
+  color: var(--orange);
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+.manual-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.manual-steps li {
+  font-size: 10px;
+  color: var(--text-dim);
+  padding: 5px 8px;
+  background: var(--metal);
+  border-radius: 3px;
+  border-left: 2px solid var(--border2);
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 22px;
+}
+.manual-steps li::before {
+  content: attr(data-n);
+  position: absolute;
+  left: 7px;
+  font-size: 9px;
+  color: var(--text-dim);
+  font-family: 'Orbitron', monospace;
+}
+.manual-steps li strong { color: var(--orange); }
+.manual-divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+/* RADIO */
+.radio-wrap {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.radio-display {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-align: center;
+  padding: 8px;
+  background: #040608;
+  border: 1px solid #0a1018;
+  border-radius: 4px;
+  color: var(--green);
+  text-shadow: 0 0 16px rgba(0,232,122,0.6);
+  margin-bottom: 8px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+}
+.radio-display.locked-freq { color: var(--red); text-shadow: 0 0 16px rgba(255,34,68,0.6); }
+.radio-required { font-size: 9px; color: var(--text-dim); text-align: center; letter-spacing: 1px; margin-bottom: 8px; }
+.radio-required span { color: var(--orange); }
+.radio-controls { display: flex; gap: 6px; }
+.radio-btn {
+  flex: 1;
+  padding: 7px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  color: var(--text-dim);
+  transition: all 0.15s;
+  user-select: none;
+}
+.radio-btn:hover { border-color: var(--blue); color: var(--blue); }
+.radio-btn.tx { color: var(--green); border-color: var(--green-dim); }
+.radio-btn.tx:hover { background: var(--green-dim); }
+
+/* ACCESS LEVEL */
+.access-wrap {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.access-display {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  transition: all 0.3s;
+}
+.access-display.lvl-low { color: var(--red); text-shadow: 0 0 14px rgba(255,34,68,0.5); }
+.access-display.lvl-mid { color: var(--orange); text-shadow: 0 0 14px rgba(255,140,0,0.5); }
+.access-display.lvl-ok { color: var(--green); text-shadow: 0 0 14px rgba(0,232,122,0.5); }
+.access-sub { font-size: 8px; color: var(--text-dim); text-align: center; letter-spacing: 2px; margin-bottom: 10px; }
+.access-btns { display: flex; gap: 6px; }
+.acc-btn {
+  flex: 1;
+  padding: 7px;
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  color: var(--text-dim);
+  transition: all 0.15s;
+  user-select: none;
+}
+.acc-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* LOG */
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+.log-list::-webkit-scrollbar { width: 3px; }
+.log-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.log-entry {
+  display: flex;
+  gap: 8px;
+  padding: 4px 8px;
+  background: var(--metal);
+  border-radius: 3px;
+  border-left: 2px solid var(--text-dim);
+  font-size: 9px;
+  animation: logSlide 0.3s ease;
+}
+@keyframes logSlide { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.log-entry.ok { border-left-color: var(--green); }
+.log-entry.warn { border-left-color: var(--orange); }
+.log-entry.err { border-left-color: var(--red); }
+.log-time { color: var(--text-dim); flex-shrink: 0; font-family: 'Orbitron', monospace; font-size: 8px; }
+.log-msg { color: var(--text); }
+
+/* ══════════════════════════════════════════
+   MINIGAME OVERLAY
+══════════════════════════════════════════ */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.94);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.overlay.show { display: flex; }
+
+.mg-box {
+  background: linear-gradient(180deg, #0d1420 0%, #080c14 100%);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 36px 40px;
+  width: 500px;
+  text-align: center;
+  box-shadow: 0 0 80px rgba(0,0,0,0.9), 0 0 40px rgba(0,232,122,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.mg-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity: 0.3;
+}
+.mg-header {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.mg-subhead { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 24px; }
+.mg-timer {
+  font-family: 'Orbitron', monospace;
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: 0 0 30px rgba(0,232,122,0.5);
+  line-height: 1;
+  margin-bottom: 6px;
+  transition: all 0.3s;
+}
+.mg-timer.warn { color: var(--orange); text-shadow: 0 0 30px rgba(255,140,0,0.5); }
+.mg-timer.danger { color: var(--red); text-shadow: 0 0 30px rgba(255,34,68,0.6); }
+.mg-progress-bar-wrap {
+  height: 3px;
+  background: var(--inset);
+  border-radius: 2px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.mg-progress-bar {
+  height: 100%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width 1s linear, background 0.3s;
+  box-shadow: 0 0 8px var(--green);
+}
+.mg-score { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 6px; }
+.mg-score span { color: var(--green); font-family: 'Orbitron', monospace; }
+.mg-question {
+  font-size: 36px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  color: var(--text2);
+  margin: 16px 0;
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(200,220,255,0.15);
+}
+.mg-input {
+  background: var(--inset);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  color: var(--green2);
+  font-family: 'Orbitron', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 16px;
+  width: 180px;
+  outline: none;
+  letter-spacing: 4px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mg-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 16px rgba(0,232,122,0.2);
+}
+.mg-input.shake {
+  border-color: var(--red);
+  animation: shake 0.35s;
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(4px)}
+}
+.mg-hint { font-size: 9px; color: var(--text-dim); letter-spacing: 1px; margin-top: 8px; }
+.mg-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.mg-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--inset);
+  border: 1px solid var(--border2);
+  transition: all 0.3s;
+}
+.mg-dot.ok { background: var(--green); border-color: var(--green); box-shadow: 0 0 8px var(--green); }
+.mg-dot.fail { background: var(--red); border-color: var(--red); box-shadow: 0 0 8px var(--red); }
+
+/* FAIL FLASH */
+.fail-flash {
+  display: none;
+  position: fixed;
+  inset: 0;
+  border: 6px solid var(--red);
+  z-index: 9998;
+  pointer-events: none;
+  box-shadow: inset 0 0 60px rgba(255,0,40,0.15);
+  animation: failAnim 0.4s ease forwards;
+}
+@keyframes failAnim { 0%{opacity:0} 30%{opacity:1} 100%{opacity:0} }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  background: var(--panel);
+  border: 1px solid var(--green);
+  border-radius: 5px;
+  padding: 11px 18px;
+  font-size: 11px;
+  color: var(--green);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 20px rgba(0,232,122,0.1);
+  z-index: 600;
+  display: none;
+  max-width: 300px;
+  letter-spacing: 0.5px;
+}
+.toast.err { border-color: var(--red); color: var(--red); box-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255,34,68,0.1); }
 </style>
 </head>
 <body>
 
-<div class="stage">
-  <div class="safe" id="safe">
-    <div class="bolt tl"></div><div class="bolt tr"></div>
-    <div class="bolt bl"></div><div class="bolt br"></div>
-    <div class="brand">SAFE · SECURE</div>
+<!-- FAIL FLASH -->
+<div class="fail-flash" id="failFlash"></div>
 
-    <!-- Interior (the chamber behind the door) -->
-    <div class="interior" id="interior">
-      <div class="note-wrap" id="noteWrap">
-        <div class="note" id="note">
-          <div class="icon"><svg viewBox="0 0 64 64"><rect x="11" y="6" width="42" height="52" rx="4" fill="#3a2606"/><g stroke="#3a2606" stroke-width="2.8" stroke-linecap="round" opacity="0.4"><line x1="19" y1="18" x2="45" y2="18"/><line x1="19" y1="26" x2="45" y2="26"/><line x1="19" y1="34" x2="45" y2="34"/><line x1="19" y1="42" x2="38" y2="42"/></g></svg></div>
-          <div class="title">Appuie</div>
-          <div class="sub">pour le code</div>
-        </div>
-      </div>
-      <div class="flash" id="flash"></div>
-    </div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-    <!-- Door (with keypad) -->
-    <div class="door" id="door">
-      <div class="label">CODE · 4 CHIFFRES</div>
-      <div class="display">
-        <div class="dot" id="dot0"></div>
-        <div class="dot" id="dot1"></div>
-        <div class="dot" id="dot2"></div>
-        <div class="dot" id="dot3"></div>
-      </div>
-      <div class="keypad">
-        <button class="key" data-d="1">1</button>
-        <button class="key" data-d="2">2</button>
-        <button class="key" data-d="3">3</button>
-        <button class="key" data-d="4">4</button>
-        <button class="key" data-d="5">5</button>
-        <button class="key" data-d="6">6</button>
-        <button class="key" data-d="7">7</button>
-        <button class="key" data-d="8">8</button>
-        <button class="key" data-d="9">9</button>
-        <button class="key act clear" data-a="clear">C</button>
-        <button class="key" data-d="0">0</button>
-        <button class="key act back" data-a="back">⌫</button>
-      </div>
-      <div class="status" id="status">Entre le code</div>
-    </div>
+<!-- MINIGAME OVERLAY -->
+<div class="overlay" id="mgOverlay">
+  <div class="mg-box">
+    <div class="mg-header">⚡ CALCUL D'AUTORISATION</div>
+    <div class="mg-subhead">SÉCURITÉ RÉSEAU — VÉRIFICATION OPÉRATEUR REQUISE</div>
+    <div class="mg-timer" id="mgTimer">15</div>
+    <div class="mg-progress-bar-wrap"><div class="mg-progress-bar" id="mgBar" style="width:100%"></div></div>
+    <div class="mg-score">QUESTION <span id="mgCurr">1</span> / 3 &nbsp;—&nbsp; <span id="mgOk">0</span> CORRECTES</div>
+    <div class="mg-question" id="mgQ">?</div>
+    <input class="mg-input" id="mgIn" type="number" placeholder="0">
+    <div class="mg-hint">[ ENTRÉE ] pour valider</div>
+    <div class="mg-dots" id="mgDots"></div>
   </div>
 </div>
 
-<div class="screen" id="screen">
-  <div class="modal">
-    <h2>Note retrouvée</h2>
-    <div class="line">MDP de mon PC</div>
-    <div class="pwd">ZoeLaGoat</div>
-    <div class="sig">— Pour ne pas oublier ✍</div>
-    <button class="btn" id="close">Fermer</button>
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
+<div class="header">
+  <div class="hdr-left">
+    <div class="hdr-icon">⚡</div>
+    <div class="hdr-sep"></div>
+    <div>
+      <div class="hdr-title">LSEC — CONTRÔLE RÉSEAU</div>
+      <div class="hdr-sub">LOS SANTOS ENERGY CORP · SECTOR 7 · STATION CENTRALE</div>
+    </div>
   </div>
+  <div class="hdr-metrics">
+    <div class="metric-chip"><span class="val" id="dispVolt">230V</span><span class="lbl">TENSION</span></div>
+    <div class="metric-chip"><span class="val" id="dispAmp">48A</span><span class="lbl">INTENSITÉ</span></div>
+    <div class="metric-chip"><span class="val" id="dispHz">50.0Hz</span><span class="lbl">FRÉQUENCE</span></div>
+    <div class="metric-chip"><span class="val" id="dispLoad">82%</span><span class="lbl">CHARGE</span></div>
+    <div class="hdr-sep"></div>
+    <div class="clock-chip" id="clock">--:--:--</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LAYOUT
+══════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- ────────────── LEFT ────────────── -->
+  <div class="left-col">
+
+    <!-- DISJONCTEURS -->
+    <div class="card">
+      <div class="card-title"><div class="dot red"></div>DISJONCTEURS SECTORIELS</div>
+      <div class="breakers" id="breakerList">
+        <div class="breaker req-off" data-zone="A" onclick="toggleBreaker(this)">
+          <div class="brk-info">
+            <div class="brk-name">Zone A — Résidentiel</div>
+            <div class="brk-zone">BLOC NORD</div>
+            <div class="brk-req">⚠ REQUIS : DÉSACTIVER</div>
+          </div>
+          <div class="toggle on" id="brk-A"></div>
+        </div>
+        <div class="breaker req-off" data-zone="B" onclick="toggleBreaker(this)">
+          <div class="brk-info">
+            <div class="brk-name">Zone B — Commercial</div>
+            <div class="brk-zone">RUE PRINCIPALE</div>
+            <div class="brk-req">⚠ REQUIS : DÉSACTIVER</div>
+          </div>
+          <div class="toggle on" id="brk-B"></div>
+        </div>
+        <div class="breaker req-off" data-zone="C" onclick="toggleBreaker(this)">
+          <div class="brk-info">
+            <div class="brk-name">Zone C — Industriel</div>
+            <div class="brk-zone">PORT EST</div>
+            <div class="brk-req">⚠ REQUIS : DÉSACTIVER</div>
+          </div>
+          <div class="toggle on" id="brk-C"></div>
+        </div>
+        <div class="breaker req-off" data-zone="D" onclick="toggleBreaker(this)">
+          <div class="brk-info">
+            <div class="brk-name">Zone D — Urgences</div>
+            <div class="brk-zone">HÔPITAL / PD</div>
+            <div class="brk-req">⚠ REQUIS : DÉSACTIVER</div>
+          </div>
+          <div class="toggle on" id="brk-D"></div>
+        </div>
+        <div class="breaker req-off" data-zone="E" onclick="toggleBreaker(this)">
+          <div class="brk-info">
+            <div class="brk-name">Zone E — Infrastructure</div>
+            <div class="brk-zone">EAU / GAZ</div>
+            <div class="brk-req">⚠ REQUIS : DÉSACTIVER</div>
+          </div>
+          <div class="toggle on" id="brk-E"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAUGES -->
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>MÉTRIQUES RÉSEAU</div>
+      <div class="gauge-list">
+        <div class="gauge-item">
+          <div class="gauge-head"><span>CHARGE RÉSEAU</span><span class="gval orange" id="gv1">82%</span></div>
+          <div class="gauge-track"><div class="gauge-fill orange" id="gf1" style="width:82%"></div></div>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge-head"><span>TEMP. TRANSFO</span><span class="gval orange" id="gv2">61°C</span></div>
+          <div class="gauge-track"><div class="gauge-fill orange" id="gf2" style="width:61%"></div></div>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge-head"><span>STABILITÉ FRÉQ.</span><span class="gval green" id="gv3">94%</span></div>
+          <div class="gauge-track"><div class="gauge-fill green" id="gf3" style="width:94%"></div></div>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge-head"><span>SÉCURITÉ SYST.</span><span class="gval green" id="gv4">78%</span></div>
+          <div class="gauge-track"><div class="gauge-fill green" id="gf4" style="width:78%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="card">
+      <div class="card-title"><div class="dot blue"></div>COMMANDES OPÉRATEUR</div>
+      <div class="qa-grid">
+        <div class="qa-btn b" onclick="qa('diag')">🔍 DIAGNOSTIC</div>
+        <div class="qa-btn y" onclick="qa('backup')">⚙ BACKUP GEN.</div>
+        <div class="qa-btn o" onclick="qa('alarm')">🚨 ALARME</div>
+        <div class="qa-btn r" onclick="qa('purge')">☠ PURGE SYST.</div>
+        <div class="qa-btn b" onclick="qa('reset')">↩ RESET ERR.</div>
+        <div class="qa-btn y" onclick="qa('log')">📋 EXPORT LOG</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ────────────── CENTER ────────────── -->
+  <div class="center-col">
+
+    <!-- MAP -->
+    <div class="card">
+      <div class="card-title"><div class="dot blue"></div>CARTE RÉSEAU — SECTEUR 7</div>
+      <div class="map-grid" id="mapGrid"></div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div class="card">
+      <div class="card-title"><div class="dot orange"></div>PRÉREQUIS — PROTOCOLE DE COUPURE</div>
+      <div class="checklist" id="checklist">
+        <div class="check-item" id="chk-breakers">
+          <div class="check-icon">✓</div>
+          <div class="check-label">Tous les disjoncteurs sectoriels désactivés</div>
+          <div class="check-badge">0/5</div>
+        </div>
+        <div class="check-item" id="chk-freq">
+          <div class="check-icon">✓</div>
+          <div class="check-label">Fréquence radio sur canal d'urgence <span style="color:var(--orange)">88.5 MHz</span></div>
+          <div class="check-badge">--</div>
+        </div>
+        <div class="check-item" id="chk-access">
+          <div class="check-icon">✓</div>
+          <div class="check-label">Niveau d'accès opérateur élevé à <span style="color:var(--orange)">LVL 5</span></div>
+          <div class="check-badge">LVL 3</div>
+        </div>
+        <div class="check-item" id="chk-calc">
+          <div class="check-icon">✓</div>
+          <div class="check-label">Calcul d'autorisation de sécurité validé</div>
+          <div class="check-badge">EN ATTENTE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POWER STATION -->
+    <div class="power-station">
+      <div class="card-title" style="width:100%;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:0">
+        <div class="dot red" id="mainDot"></div>
+        ALIMENTATION PRINCIPALE — COMMANDE GÉNÉRALE
+      </div>
+
+      <div class="lamps-row">
+        <div class="lamp-group">
+          <div class="lamp green" id="lampOn"></div>
+          <span class="lamp-lbl">NOMINAL</span>
+        </div>
+        <div class="lamp-group">
+          <div class="lamp dark" id="lampFault"></div>
+          <span class="lamp-lbl">DÉFAUT</span>
+        </div>
+        <div class="lamp-group">
+          <div class="lamp dark" id="lampAlarm"></div>
+          <span class="lamp-lbl">ALARME</span>
+        </div>
+        <div style="flex:1"></div>
+        <div class="power-status-display on" id="powerDisp">⚡ ALIMENTATION : ON</div>
+      </div>
+
+      <!-- LEVER -->
+      <div class="lever-container">
+        <div class="lever-label-top">⚡ ON</div>
+        <div class="lever-svg-wrap" id="leverWrap">
+          <svg id="leverSvg" width="100" height="300" viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Track / slot -->
+            <defs>
+              <linearGradient id="trackGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#060a10"/>
+                <stop offset="50%" stop-color="#0d1520"/>
+                <stop offset="100%" stop-color="#060a10"/>
+              </linearGradient>
+              <linearGradient id="metalGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#1a2434"/>
+                <stop offset="30%" stop-color="#2e4060"/>
+                <stop offset="50%" stop-color="#3a5070"/>
+                <stop offset="70%" stop-color="#2e4060"/>
+                <stop offset="100%" stop-color="#1a2434"/>
+              </linearGradient>
+              <linearGradient id="knobGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3a5068"/>
+                <stop offset="40%" stop-color="#2a3a50"/>
+                <stop offset="100%" stop-color="#141e2c"/>
+              </linearGradient>
+              <linearGradient id="knobRadial" cx="35%" cy="30%" r="60%" fx="35%" fy="30%" gradientUnits="objectBoundingBox">
+                <stop offset="0%" stop-color="#4a6080"/>
+                <stop offset="100%" stop-color="#0e1820"/>
+              </linearGradient>
+              <radialGradient id="glowGreen" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(0,232,122,0.3)"/>
+                <stop offset="100%" stop-color="rgba(0,232,122,0)"/>
+              </radialGradient>
+              <radialGradient id="glowRed" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(255,34,68,0.3)"/>
+                <stop offset="100%" stop-color="rgba(255,34,68,0)"/>
+              </radialGradient>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.7)"/>
+              </filter>
+            </defs>
+
+            <!-- Base plate -->
+            <rect x="30" y="20" width="40" height="260" rx="20" fill="url(#trackGrad)" stroke="#1a2436" stroke-width="1.5"/>
+            <!-- Track groove -->
+            <rect x="46" y="30" width="8" height="240" rx="4" fill="#030508" stroke="#0a1018" stroke-width="1"/>
+            <!-- Track highlight -->
+            <rect x="47.5" y="30" width="2" height="240" rx="1" fill="rgba(255,255,255,0.04)"/>
+
+            <!-- Glow under handle (dynamic) -->
+            <ellipse id="leverGlow" cx="50" cy="50" rx="28" ry="20" fill="url(#glowGreen)" opacity="0.8"/>
+
+            <!-- Arm / stick -->
+            <g id="leverArm">
+              <!-- Shadow stick -->
+              <rect x="48.5" y="50" width="5" height="180" rx="2.5" fill="rgba(0,0,0,0.5)"/>
+              <!-- Main stick -->
+              <rect id="stickBody" x="47" y="50" width="6" height="180" rx="3"
+                fill="url(#metalGrad)" stroke="#1e2e42" stroke-width="0.5"/>
+              <!-- Stick highlight -->
+              <rect x="47.5" y="50" width="2" height="180" rx="1" fill="rgba(255,255,255,0.07)"/>
+              <!-- Rivets on stick -->
+              <circle cx="50" cy="90" r="3" fill="#0d1520" stroke="#1e2e3a" stroke-width="0.5"/>
+              <circle cx="50" cy="140" r="3" fill="#0d1520" stroke="#1e2e3a" stroke-width="0.5"/>
+              <circle cx="50" cy="190" r="3" fill="#0d1520" stroke="#1e2e3a" stroke-width="0.5"/>
+
+              <!-- HANDLE GROUP (draggable part) -->
+              <g id="leverHandle" filter="url(#shadow)">
+                <!-- Handle shadow -->
+                <ellipse cx="51" cy="57" rx="26" ry="10" fill="rgba(0,0,0,0.4)"/>
+                <!-- Handle body outer -->
+                <ellipse cx="50" cy="50" rx="26" ry="22" fill="url(#knobGrad)" stroke="#2a3c52" stroke-width="1.5"/>
+                <!-- Handle body inner radial -->
+                <ellipse cx="50" cy="48" rx="22" ry="18" fill="url(#knobRadial)"/>
+                <!-- Inner ring -->
+                <ellipse cx="50" cy="48" rx="14" ry="11" fill="none" stroke="#1e2e42" stroke-width="1"/>
+                <!-- Center cap -->
+                <ellipse cx="50" cy="47" rx="8" ry="6.5" fill="#0e1820" stroke="#1a2838" stroke-width="1"/>
+                <!-- Top glare -->
+                <ellipse cx="44" cy="40" rx="6" ry="4" fill="rgba(255,255,255,0.07)" transform="rotate(-20,44,40)"/>
+                <!-- Warning stripe ring -->
+                <ellipse cx="50" cy="50" rx="26" ry="22" fill="none" stroke-width="3"
+                  stroke-dasharray="8 8" stroke-dashoffset="0" id="leverStripe" stroke="rgba(255,140,0,0.25)"/>
+                <!-- Grip lines on sides -->
+                <line x1="26" y1="44" x2="26" y2="56" stroke="#1e2e42" stroke-width="1.5"/>
+                <line x1="74" y1="44" x2="74" y2="56" stroke="#1e2e42" stroke-width="1.5"/>
+                <line x1="28" y1="42" x2="28" y2="58" stroke="#2a3c52" stroke-width="1"/>
+                <line x1="72" y1="42" x2="72" y2="58" stroke="#2a3c52" stroke-width="1"/>
+                <!-- Bolt holes on handle -->
+                <circle cx="38" cy="60" r="2.5" fill="#060a10" stroke="#1a2434" stroke-width="0.5"/>
+                <circle cx="62" cy="60" r="2.5" fill="#060a10" stroke="#1a2434" stroke-width="0.5"/>
+                <!-- Power icon -->
+                <text id="leverIcon" x="50" y="52" text-anchor="middle" dominant-baseline="middle"
+                  font-size="11" fill="rgba(0,232,122,0.8)" font-family="monospace">⚡</text>
+              </g>
+            </g>
+
+            <!-- Track markers -->
+            <line x1="30" y1="50" x2="44" y2="50" stroke="rgba(0,232,122,0.3)" stroke-width="1"/>
+            <line x1="56" y1="50" x2="70" y2="50" stroke="rgba(0,232,122,0.3)" stroke-width="1"/>
+            <line x1="30" y1="260" x2="44" y2="260" stroke="rgba(255,34,68,0.3)" stroke-width="1"/>
+            <line x1="56" y1="260" x2="70" y2="260" stroke="rgba(255,34,68,0.3)" stroke-width="1"/>
+            <!-- End stops -->
+            <rect x="30" y="16" width="40" height="8" rx="4" fill="#1a2434"/>
+            <rect x="30" y="276" width="40" height="8" rx="4" fill="#1a2434"/>
+          </svg>
+        </div>
+        <div class="lever-label-bot">✖ OFF</div>
+        <div class="lever-locked-msg" id="leverLockedMsg">⚠ PRÉREQUIS INCOMPLETS</div>
+      </div>
+
+      <button class="start-seq-btn locked" id="mainBtn" onclick="handleMainBtn()">
+        🔒 PRÉREQUIS INCOMPLETS
+      </button>
+    </div>
+
+    <!-- LOG -->
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>JOURNAL SYSTÈME</div>
+      <div class="log-list" id="logList"></div>
+    </div>
+
+  </div>
+
+  <!-- ────────────── RIGHT ────────────── -->
+  <div class="right-col">
+
+    <!-- MANUAL -->
+    <div class="card">
+      <div class="card-title"><div class="dot orange"></div>MANUEL D'URGENCE — § COUPURE</div>
+      <div class="manual-section">
+        <div class="manual-num">PROTOCOLE P-7 — COUPURE SECTEUR TOTAL</div>
+        <ol class="manual-steps">
+          <li data-n="1">Désactiver <strong>tous les disjoncteurs</strong> sectoriels (zones A→E) un par un</li>
+          <li data-n="2">Régler la radio sur fréquence d'urgence <strong>88.5 MHz</strong> puis transmettre</li>
+          <li data-n="3">Élever le niveau d'accès à <strong>LVL 5</strong> via la console d'accréditation</li>
+          <li data-n="4">Passer le <strong>calcul d'autorisation</strong> de sécurité réseau</li>
+          <li data-n="5">Actionner le <strong>levier principal</strong> vers la position OFF</li>
+        </ol>
+      </div>
+      <div class="manual-divider"></div>
+      <div class="manual-section">
+        <div class="manual-num">§ RÉTABLISSEMENT</div>
+        <ol class="manual-steps">
+          <li data-n="1">Actionner le levier en position ON</li>
+          <li data-n="2">Vérifier la stabilisation réseau (min. 30s)</li>
+          <li data-n="3">Réactiver les disjoncteurs zone par zone</li>
+        </ol>
+      </div>
+      <div class="manual-divider"></div>
+      <div class="manual-section">
+        <div class="manual-num">§ SEUILS CRITIQUES</div>
+        <ol class="manual-steps">
+          <li data-n="!">Charge > <strong>95%</strong> → Délestage automatique</li>
+          <li data-n="!">Temp > <strong>85°C</strong> → Arrêt d'urgence forcé</li>
+          <li data-n="!">Fréq < <strong>49Hz</strong> → Instabilité réseau</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- RADIO -->
+    <div class="card">
+      <div class="card-title"><div class="dot blue"></div>RADIO LIAISON — DISPATCH</div>
+      <div class="radio-wrap">
+        <div class="radio-display" id="radioDisp">107.8 MHz</div>
+        <div class="radio-required">URGENCE : <span>88.5 MHz</span> requis</div>
+        <div class="radio-controls">
+          <div class="radio-btn" onclick="radioChange(-0.1)">◄◄</div>
+          <div class="radio-btn" onclick="radioChange(-1)">◄</div>
+          <div class="radio-btn tx" onclick="radioTx()">📡 TX</div>
+          <div class="radio-btn" onclick="radioChange(1)">►</div>
+          <div class="radio-btn" onclick="radioChange(0.1)">►►</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCESS LEVEL -->
+    <div class="card">
+      <div class="card-title"><div class="dot orange"></div>CONSOLE D'ACCRÉDITATION</div>
+      <div class="access-wrap">
+        <div class="access-display lvl-mid" id="accessDisp">LVL 3</div>
+        <div class="access-sub" id="accessSub">TECHNICIEN RÉSEAU — CLEARANCE INSUFFISANT</div>
+        <div class="access-btns">
+          <div class="acc-btn" onclick="accessChange(-1)">▼ RÉDUIRE</div>
+          <div class="acc-btn" onclick="accessChange(1)" style="color:var(--green);border-color:var(--green-dim)">▲ ÉLEVER</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <script>
-let actx;
-function tick(f=800,d=0.04,v=0.08,t='sine'){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(actx.destination);o.start();g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+d);o.stop(actx.currentTime+d);}catch(e){}}
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+const WEBHOOK = 'https://discord.com/api/webhooks/1506338037741912064/yjKZmzE9COckt53C1QGb00aEa5Z63gjdr4zKYtypszoFGPSKxa7Ge5oJaJfZSXBROIw6';
+const REQ_FREQ = 88.5;
+const REQ_LEVEL = 5;
+const TOTAL_ZONES = 5;
+const TOTAL_Q = 3;
 
-const CODE=[1,9,8,5];
-const dots=[0,1,2,3].map(i=>document.getElementById('dot'+i));
-const safe=document.getElementById('safe'), door=document.getElementById('door');
-const noteWrap=document.getElementById('noteWrap'), note=document.getElementById('note');
-const interior=document.getElementById('interior'), flash=document.getElementById('flash');
-const statusEl=document.getElementById('status');
-let entered=[], unlocked=false, busy=false;
+let state = {
+  powerOn: true,
+  radioFreq: 107.8,
+  accessLevel: 3,
+  brkStates: { A:true, B:true, C:true, D:true, E:true }, // true = ON
+  calcDone: false,
+  // prereqs
+  prereqBreakers: false,
+  prereqFreq: false,
+  prereqAccess: false,
+  prereqCalc: false,
+};
 
-function updateDots(){
-  dots.forEach((d,i)=>{
-    d.classList.remove('on','err','good','next');
-    if(i<entered.length) d.classList.add('on');
-    else if(i===entered.length && !unlocked && !busy) d.classList.add('next');
+// Lever animation state
+let leverY = 0; // 0 = top (ON), 1 = bottom (OFF)
+let leverDragging = false;
+let leverDragStart = 0;
+let leverCurrentPx = 0;
+const LEVER_MIN = 0;
+const LEVER_MAX = 210; // pixels of travel
+
+// ═══════════════════════════════════════
+//  CLOCK + METRICS ANIMATION
+// ═══════════════════════════════════════
+function tick() {
+  const n = new Date();
+  const pad = v => String(v).padStart(2,'0');
+  document.getElementById('clock').textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+}
+setInterval(tick, 1000); tick();
+
+const gTargets = { g1:82, g2:61, g3:94, g4:78 };
+function updateGauges() {
+  const cols = { g1:'orange', g2:'orange', g3:'green', g4:'green' };
+  Object.keys(gTargets).forEach(id => {
+    gTargets[id] = Math.min(100, Math.max(5, gTargets[id] + (Math.random()-0.5)*3));
+    const v = Math.round(gTargets[id]);
+    const suffix = id==='g2' ? '°C' : '%';
+    document.getElementById('gv'+id[1]).textContent = v+suffix;
+    document.getElementById('gf'+id[1]).style.width = v+'%';
+    const cls = v>85?'red':v>65?'orange':'green';
+    document.getElementById('gf'+id[1]).className = 'gauge-fill '+cls;
+    document.getElementById('gv'+id[1]).className = 'gval '+cls;
+  });
+  document.getElementById('dispLoad').textContent = Math.round(gTargets.g1)+'%';
+  document.getElementById('dispVolt').textContent = (230+(Math.random()-.5)*3).toFixed(0)+'V';
+  document.getElementById('dispAmp').textContent = (48+(Math.random()-.5)*5).toFixed(0)+'A';
+  document.getElementById('dispHz').textContent = (50+(Math.random()-.5)*0.4).toFixed(1)+'Hz';
+}
+setInterval(updateGauges, 2200);
+
+// ═══════════════════════════════════════
+//  MAP
+// ═══════════════════════════════════════
+const mapZones = ['A1','A2','A3','A4','A5','B1','B2','B3','B4','B5','C1','C2','HUB','C4','C5','D1','D2','D3','D4','D5','E1','E2','E3','E4','E5'];
+(function buildMap(){
+  const g = document.getElementById('mapGrid');
+  mapZones.forEach(z => {
+    const c = document.createElement('div');
+    c.className = 'map-cell ' + (z==='HUB' ? 'hub' : 'live');
+    c.textContent = z;
+    c.dataset.zone = z;
+    if(z!=='HUB') c.onclick = () => {
+      c.classList.toggle('live');
+      c.classList.toggle('dead');
+      addLog(c.classList.contains('live')?'ok':'warn', `Cellule ${z} ${c.classList.contains('live')?'reconnectée':'déconnectée'}`);
+    };
+    g.appendChild(c);
+  });
+})();
+
+function setMapPower(on) {
+  document.querySelectorAll('.map-cell:not(.hub)').forEach(c => {
+    c.className = 'map-cell ' + (on ? 'live' : 'dead');
   });
 }
-function addDigit(n){
-  if(unlocked||busy||entered.length>=4) return;
-  entered.push(n); updateDots(); tick(820,0.04,0.07,'square');
-  if(entered.length===4) setTimeout(validate,240);
+
+// ═══════════════════════════════════════
+//  LOG
+// ═══════════════════════════════════════
+['ok:Connexion opérateur établie — Station Centrale 7',
+ 'ok:Système nominal — tous secteurs actifs',
+ 'warn:Charge réseau élevée détectée : 82%',
+ 'ok:Diagnostic automatique : aucune anomalie'].forEach(s => {
+  const [t,m] = s.split(':'); addLog(t,m);
+});
+function addLog(type, msg) {
+  const list = document.getElementById('logList');
+  const n = new Date(), p = v=>String(v).padStart(2,'0');
+  const t = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+  const e = document.createElement('div');
+  e.className = `log-entry ${type}`;
+  e.innerHTML = `<span class="log-time">${t}</span><span class="log-msg">${msg}</span>`;
+  list.insertBefore(e, list.firstChild);
+  while(list.children.length > 24) list.removeChild(list.lastChild);
 }
-function clearAll(){
-  if(unlocked||busy) return;
-  entered=[]; updateDots(); tick(400,0.06,0.06);
-  statusEl.className='status'; statusEl.textContent='Entre le code';
+
+// ═══════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════
+let toastTid;
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err?' err':'');
+  t.style.display = 'block';
+  clearTimeout(toastTid);
+  toastTid = setTimeout(() => t.style.display='none', 3200);
 }
-function back(){
-  if(unlocked||busy) return;
-  entered.pop(); updateDots(); tick(560,0.04,0.06);
+
+// ═══════════════════════════════════════
+//  BREAKERS
+// ═══════════════════════════════════════
+function toggleBreaker(el) {
+  const zone = el.dataset.zone;
+  const tog = el.querySelector('.toggle');
+  const isOn = tog.classList.contains('on');
+  // If power is OFF, just restore individual zones freely
+  if(!state.powerOn) {
+    tog.classList.toggle('on');
+    state.brkStates[zone] = !isOn;
+    addLog('ok', `Disjoncteur Zone ${zone} : ${!isOn?'ACTIVÉ':'DÉSACTIVÉ'}`);
+    return;
+  }
+  tog.classList.toggle('on');
+  state.brkStates[zone] = !isOn;
+  addLog(state.brkStates[zone]?'ok':'warn', `Disjoncteur Zone ${zone} : ${state.brkStates[zone]?'ACTIVÉ':'DÉSACTIVÉ'}`);
+  updatePrereqs();
 }
-function validate(){
-  busy=true;
-  const ok=entered.every((d,i)=>d===CODE[i]);
-  if(ok){
-    // sequential green wave on dots
-    dots.forEach((d,i)=>setTimeout(()=>{
-      d.classList.remove('on','next');
-      d.classList.add('good');
-      tick(900+i*120,0.08,0.08,'triangle');
-    }, i*70));
-    statusEl.className='status good'; statusEl.textContent='Accès accordé';
-    setTimeout(unlock, 600);
+
+// ═══════════════════════════════════════
+//  RADIO
+// ═══════════════════════════════════════
+function radioChange(d) {
+  state.radioFreq = Math.round((state.radioFreq + d) * 10) / 10;
+  if(state.radioFreq > 108) state.radioFreq = 87.5;
+  if(state.radioFreq < 87.5) state.radioFreq = 108;
+  const disp = document.getElementById('radioDisp');
+  disp.textContent = state.radioFreq.toFixed(1) + ' MHz';
+  disp.className = 'radio-display' + (Math.abs(state.radioFreq - REQ_FREQ) < 0.05 ? '' : ' locked-freq');
+  addLog('ok', `Radio : ${state.radioFreq.toFixed(1)} MHz`);
+  updatePrereqs();
+}
+function radioTx() {
+  addLog('ok', `📡 Transmission ${state.radioFreq.toFixed(1)} MHz → dispatch`);
+  showToast(`📡 TX ${state.radioFreq.toFixed(1)} MHz`);
+}
+
+// ═══════════════════════════════════════
+//  ACCESS LEVEL
+// ═══════════════════════════════════════
+function accessChange(d) {
+  state.accessLevel = Math.min(5, Math.max(1, state.accessLevel + d));
+  const disp = document.getElementById('accessDisp');
+  const sub = document.getElementById('accessSub');
+  disp.textContent = 'LVL ' + state.accessLevel;
+  disp.className = 'access-display ' + (state.accessLevel >= 5 ? 'lvl-ok' : state.accessLevel >= 3 ? 'lvl-mid' : 'lvl-low');
+  const labels = {1:'ACCÈS REFUSÉ',2:'ACCÈS LIMITÉ',3:'TECHNICIEN',4:'SUPERVISEUR',5:'ADMINISTRATEUR'};
+  const ok = state.accessLevel >= REQ_LEVEL;
+  sub.textContent = `${labels[state.accessLevel]}${ok?' — CLEARANCE OK':' — CLEARANCE INSUFFISANT'}`;
+  addLog(ok?'ok':'warn', `Accès : LVL ${state.accessLevel} — ${labels[state.accessLevel]}`);
+  updatePrereqs();
+}
+
+// ═══════════════════════════════════════
+//  PREREQ CHECKER
+// ═══════════════════════════════════════
+function updatePrereqs() {
+  if(!state.powerOn) return; // no prereqs needed for restore
+
+  // Breakers
+  const allOff = Object.values(state.brkStates).every(v => !v);
+  const offCount = Object.values(state.brkStates).filter(v=>!v).length;
+  setCheck('chk-breakers', allOff, `${offCount}/5`);
+  // Mark breakers that are still ON as needing attention
+  document.querySelectorAll('.breaker.req-off').forEach(el => {
+    const zone = el.dataset.zone;
+    el.classList.toggle('done', !state.brkStates[zone]);
+  });
+
+  // Freq
+  const freqOk = Math.abs(state.radioFreq - REQ_FREQ) < 0.05;
+  setCheck('chk-freq', freqOk, freqOk ? '✓' : state.radioFreq.toFixed(1));
+
+  // Access
+  const accOk = state.accessLevel >= REQ_LEVEL;
+  setCheck('chk-access', accOk, 'LVL '+state.accessLevel);
+
+  // Calc
+  setCheck('chk-calc', state.calcDone, state.calcDone ? '✓' : 'EN ATTENTE');
+
+  state.prereqBreakers = allOff;
+  state.prereqFreq = freqOk;
+  state.prereqAccess = accOk;
+  state.prereqCalc = state.calcDone;
+
+  const allReady = allOff && freqOk && accOk && state.calcDone;
+  updateMainBtn(allReady);
+}
+
+function setCheck(id, done, badge) {
+  const el = document.getElementById(id);
+  el.classList.toggle('done', done);
+  el.querySelector('.check-badge').textContent = badge;
+}
+
+function updateMainBtn(ready) {
+  const btn = document.getElementById('mainBtn');
+  if(state.powerOn) {
+    if(ready) {
+      btn.className = 'start-seq-btn ready-cut';
+      btn.textContent = '⚡ COUPER L\'ALIMENTATION';
+    } else {
+      btn.className = 'start-seq-btn locked';
+      btn.textContent = '🔒 PRÉREQUIS INCOMPLETS';
+    }
   } else {
-    dots.forEach(d=>{d.classList.remove('on','next');d.classList.add('err');});
-    statusEl.className='status bad'; statusEl.textContent='Code incorrect';
-    tick(180,0.3,0.1,'sawtooth');
-    door.classList.add('shake');
-    setTimeout(()=>{
-      door.classList.remove('shake');
-      dots.forEach(d=>d.classList.remove('err'));
-      entered=[]; statusEl.className='status'; statusEl.textContent='Entre le code';
-      busy=false; updateDots();
-    },900);
+    btn.className = 'start-seq-btn ready-restore';
+    btn.textContent = '⚡ RÉTABLIR L\'ALIMENTATION';
   }
 }
 
-function unlock(){
-  unlocked=true;
-
-  // STAGE 1: bolts spin with stagger
-  statusEl.className='status work'; statusEl.textContent='Déverrouillage…';
-  safe.classList.add('unlocking');
-  [0,100,200,300].forEach((d,i)=>setTimeout(()=>tick(260+i*30,0.09,0.1,'square'), d));
-
-  // STAGE 2: low rumble + door starts opening
-  setTimeout(()=>{
-    statusEl.textContent='Ouverture…';
-    tick(140, 1.0, 0.13, 'sawtooth');
-    setTimeout(()=>tick(110, 0.8, 0.1, 'sawtooth'), 200);
-    door.classList.add('open');
-    safe.classList.add('unlocked');
-  }, 700);
-
-  // STAGE 3: flash + sparks + note appears
-  setTimeout(()=>{
-    flash.classList.add('fire');
-    setTimeout(()=>flash.classList.remove('fire'), 800);
-    burstSparks();
-    statusEl.textContent='Note disponible';
-    noteWrap.classList.add('show');
-    tick(1300,0.4,0.1,'triangle');
-    setTimeout(()=>tick(1700,0.3,0.08,'triangle'), 120);
-  }, 1700);
-
-  // STAGE 4: clear status text
-  setTimeout(()=>{
-    statusEl.textContent='';
-  }, 3500);
-}
-
-function burstSparks(){
-  for(let i=0;i<22;i++){
-    setTimeout(()=>{
-      const s=document.createElement('div'); s.className='spark';
-      s.style.left=(30+Math.random()*40)+'%';
-      s.style.top=(30+Math.random()*40)+'%';
-      interior.appendChild(s);
-      setTimeout(()=>s.remove(),900);
-    }, i*32);
+function handleMainBtn() {
+  if(state.powerOn) {
+    const allReady = state.prereqBreakers && state.prereqFreq && state.prereqAccess && state.prereqCalc;
+    if(!allReady) {
+      showToast('⚠ Compléter tous les prérequis d\'abord', true);
+      addLog('err', 'Accès refusé — prérequis incomplets');
+      flashFailOverlay();
+      return;
+    }
+    // Unlock lever for cutting
+    unlockLever();
+  } else {
+    // Restore — lever only, no prereqs
+    unlockLever();
   }
 }
 
-document.querySelectorAll('.key').forEach(b=>{
-  b.addEventListener('click',()=>{
-    if(b.dataset.d!=null) addDigit(+b.dataset.d);
-    else if(b.dataset.a==='clear') clearAll();
-    else if(b.dataset.a==='back') back();
-  });
-});
+// ═══════════════════════════════════════
+//  LEVER SVG DRAG
+// ═══════════════════════════════════════
+let leverLocked = true;
+
+function unlockLever() {
+  leverLocked = false;
+  document.getElementById('leverLockedMsg').style.display = 'none';
+  showToast(state.powerOn ? '⚠ Levier déverrouillé — actionnez le levier' : '⚡ Actionner le levier pour rétablir');
+  addLog('warn', 'Levier principal déverrouillé');
+}
+
+(function initLever() {
+  const wrap = document.getElementById('leverWrap');
+  const handle = document.getElementById('leverHandle');
+
+  let startClientY = 0;
+  let startPx = 0;
+
+  function clamp(v) { return Math.min(LEVER_MAX, Math.max(LEVER_MIN, v)); }
+
+  function applyPos(px) {
+    leverCurrentPx = px;
+    const frac = px / LEVER_MAX;
+    // Move the handle group via transform
+    document.getElementById('leverHandle').setAttribute('transform', `translate(0, ${px})`);
+    // Move the stick body too: stretch from 50 to 50+px
+    document.getElementById('stickBody').setAttribute('y', 50 + px);
+    document.getElementById('stickBody').setAttribute('height', Math.max(10, 180 - px));
+    // Move glow
+    const glowY = 50 + px;
+    document.getElementById('leverGlow').setAttribute('cy', glowY);
+    // Color glow
+    const isOff = frac > 0.5;
+    document.getElementById('leverGlow').setAttribute('fill', isOff ? 'url(#glowRed)' : 'url(#glowGreen)');
+    document.getElementById('leverIcon').textContent = isOff ? '✖' : '⚡';
+    document.getElementById('leverIcon').setAttribute('fill', isOff ? 'rgba(255,34,68,0.8)' : 'rgba(0,232,122,0.8)');
+    document.getElementById('leverStripe').setAttribute('stroke', isOff ? 'rgba(255,34,68,0.35)' : 'rgba(255,140,0,0.25)');
+  }
+
+  function onDown(e) {
+    if(leverLocked) {
+      document.getElementById('leverLockedMsg').style.display = 'block';
+      setTimeout(()=>document.getElementById('leverLockedMsg').style.display='none',2000);
+      return;
+    }
+    leverDragging = true;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    startClientY = clientY;
+    startPx = leverCurrentPx;
+    wrap.style.cursor = 'grabbing';
+    e.preventDefault();
+  }
+
+  function onMove(e) {
+    if(!leverDragging) return;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const delta = clientY - startClientY;
+    // Direction depends on current power state:
+    // powerOn → allow drag DOWN (positive delta)
+    // powerOff → allow drag UP (negative delta)
+    let newPx;
+    if(state.powerOn) {
+      newPx = clamp(startPx + Math.max(0, delta));
+    } else {
+      newPx = clamp(startPx + Math.min(0, delta));
+    }
+    applyPos(newPx);
+    e.preventDefault();
+  }
+
+  function onUp(e) {
+    if(!leverDragging) return;
+    leverDragging = false;
+    wrap.style.cursor = 'grab';
+    const frac = leverCurrentPx / LEVER_MAX;
+
+    if(state.powerOn) {
+      if(frac >= 0.85) {
+        // SUCCESS — cut
+        applyPos(LEVER_MAX);
+        leverLocked = true;
+        setTimeout(() => {
+          state.powerOn = false;
+          applyPowerState();
+          sendWebhook();
+        }, 200);
+      } else {
+        // Snap back to top
+        snapTo(LEVER_MIN);
+      }
+    } else {
+      if(frac <= 0.15) {
+        // SUCCESS — restore
+        applyPos(LEVER_MIN);
+        leverLocked = true;
+        setTimeout(() => {
+          state.powerOn = true;
+          applyPowerState();
+          sendWebhook();
+        }, 200);
+      } else {
+        // Snap back to bottom
+        snapTo(LEVER_MAX);
+      }
+    }
+    e.preventDefault();
+  }
+
+  function snapTo(target) {
+    const start = leverCurrentPx;
+    const dur = 300;
+    const t0 = performance.now();
+    function frame(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      const ease = 1 - Math.pow(1 - p, 3);
+      applyPos(start + (target - start) * ease);
+      if(p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  handle.addEventListener('mousedown', onDown);
+  handle.addEventListener('touchstart', onDown, {passive:false});
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, {passive:false});
+  document.addEventListener('mouseup', onUp);
+  document.addEventListener('touchend', onUp);
+
+  // Init position: lever at top (ON)
+  leverCurrentPx = 0;
+  applyPos(0);
+})();
+
+// ═══════════════════════════════════════
+//  POWER STATE APPLICATION
+// ═══════════════════════════════════════
+function applyPowerState() {
+  const on = state.powerOn;
+  document.getElementById('powerDisp').className = 'power-status-display ' + (on?'on':'off');
+  document.getElementById('powerDisp').textContent = on ? '⚡ ALIMENTATION : ON' : '✖ ALIMENTATION : OFF';
+  document.getElementById('mainDot').className = 'dot ' + (on ? 'green' : 'red');
+  document.getElementById('lampOn').className = 'lamp ' + (on ? 'green' : 'dark');
+  document.getElementById('lampFault').className = 'lamp ' + (!on ? 'red-l' : 'dark');
+  document.getElementById('lampAlarm').className = 'lamp ' + (!on ? 'red-l' : 'dark');
+  setMapPower(on);
+
+  if(!on) {
+    // All breakers forced off visually
+    Object.keys(state.brkStates).forEach(z => {
+      state.brkStates[z] = false;
+      document.getElementById('brk-'+z).classList.remove('on');
+    });
+    // Reset checklist
+    state.prereqBreakers = false;
+    state.prereqFreq = false;
+    state.prereqAccess = false;
+    // calc stays done
+    addLog('err', '⚠ COUPURE GÉNÉRALE — réseau hors tension — tous secteurs OFF');
+    showToast('✖ Alimentation coupée', true);
+  } else {
+    // Restore breakers
+    Object.keys(state.brkStates).forEach(z => {
+      state.brkStates[z] = true;
+      document.getElementById('brk-'+z).classList.add('on');
+    });
+    // Reset req-off classes
+    document.querySelectorAll('.breaker.req-off').forEach(el => el.classList.remove('done'));
+    addLog('ok', '⚡ Alimentation rétablie — tous secteurs en ligne');
+    showToast('⚡ Alimentation rétablie');
+    updatePrereqs();
+  }
+
+  updateMainBtn(false);
+}
+
+// ═══════════════════════════════════════
+//  QUICK ACTIONS
+// ═══════════════════════════════════════
+function qa(type) {
+  const m = {
+    diag: ['ok','🔍 Diagnostic : aucune anomalie critique détectée'],
+    backup: ['warn','⚙ Générateur secours : mise en route initiée'],
+    alarm: ['err','🚨 ALARME RÉSEAU — notification dispatch envoyée'],
+    purge: ['warn','☠ Purge système initiée — cache vidé'],
+    reset: ['ok','↩ Erreurs système réinitialisées'],
+    log: ['ok','📋 Journal exporté → /var/log/lsec_export.log'],
+  };
+  const [t,msg] = m[type]||['ok','Action'];
+  addLog(t, msg);
+  showToast(msg);
+}
+
+// ═══════════════════════════════════════
+//  MINIGAME
+// ═══════════════════════════════════════
+let mgInterval, mgTimer, mgCurr, mgOk, mgQuestions, mgDotEls;
+
+function startCalc() {
+  if(state.calcDone) return;
+  mgCurr = 0; mgOk = 0;
+  mgQuestions = [];
+  for(let i=0;i<TOTAL_Q;i++) {
+    const t = Math.floor(Math.random()*3);
+    let a,b,op,ans;
+    if(t===0){a=Math.floor(Math.random()*60)+10;b=Math.floor(Math.random()*60)+10;op='+';ans=a+b;}
+    else if(t===1){a=Math.floor(Math.random()*12)+2;b=Math.floor(Math.random()*12)+2;op='×';ans=a*b;}
+    else{a=Math.floor(Math.random()*80)+20;b=Math.floor(Math.random()*a)+1;op='−';ans=a-b;}
+    mgQuestions.push({q:`${a} ${op} ${b}`,ans});
+  }
+  // build dots
+  const dotWrap = document.getElementById('mgDots');
+  dotWrap.innerHTML='';
+  mgDotEls=[];
+  for(let i=0;i<TOTAL_Q;i++){const d=document.createElement('div');d.className='mg-dot';dotWrap.appendChild(d);mgDotEls.push(d);}
+  document.getElementById('mgOverlay').classList.add('show');
+  mgShowQ();
+}
+
+function mgShowQ() {
+  if(mgCurr>=TOTAL_Q){mgEnd();return;}
+  mgTimer=15;
+  const te=document.getElementById('mgTimer');
+  te.textContent=mgTimer; te.className='mg-timer';
+  document.getElementById('mgBar').style.width='100%';
+  document.getElementById('mgBar').style.background='var(--green)';
+  document.getElementById('mgCurr').textContent=mgCurr+1;
+  document.getElementById('mgOk').textContent=mgOk;
+  document.getElementById('mgQ').textContent=mgQuestions[mgCurr].q+' = ?';
+  const inp=document.getElementById('mgIn');
+  inp.value=''; inp.className='mg-input'; inp.focus();
+  clearInterval(mgInterval);
+  mgInterval=setInterval(()=>{
+    mgTimer--;
+    const pct=(mgTimer/15)*100;
+    const el=document.getElementById('mgBar');
+    el.style.width=pct+'%';
+    const te=document.getElementById('mgTimer');
+    te.textContent=mgTimer;
+    if(mgTimer<=5){te.className='mg-timer danger';el.style.background='var(--red)';}
+    else if(mgTimer<=10){te.className='mg-timer warn';el.style.background='var(--orange)';}
+    if(mgTimer<=0){clearInterval(mgInterval);mgFail();}
+  },1000);
+}
+
 document.addEventListener('keydown',e=>{
-  if(unlocked) return;
-  if(e.key>='0'&&e.key<='9'){
-    const k=document.querySelector(`.key[data-d="${e.key}"]`);
-    if(k){k.classList.add('pressed');setTimeout(()=>k.classList.remove('pressed'),100);}
-    addDigit(+e.key);
-  } else if(e.key==='Backspace'){
-    const k=document.querySelector('.key.back'); k.classList.add('pressed'); setTimeout(()=>k.classList.remove('pressed'),100);
-    back();
-  } else if(e.key==='Escape'){
-    const k=document.querySelector('.key.clear'); k.classList.add('pressed'); setTimeout(()=>k.classList.remove('pressed'),100);
-    clearAll();
+  if(e.key==='Enter'&&document.getElementById('mgOverlay').classList.contains('show')) mgSubmit();
+});
+
+function mgSubmit() {
+  const val=parseInt(document.getElementById('mgIn').value);
+  if(isNaN(val))return;
+  clearInterval(mgInterval);
+  if(val===mgQuestions[mgCurr].ans){
+    mgOk++;
+    mgDotEls[mgCurr].className='mg-dot ok';
+    addLog('ok',`Calcul Q${mgCurr+1} : CORRECT`);
+    mgCurr++;
+    setTimeout(mgShowQ,400);
+  } else {mgFail();}
+}
+
+function mgFail() {
+  mgDotEls[mgCurr].className='mg-dot fail';
+  document.getElementById('mgIn').className='mg-input shake';
+  flashFailOverlay();
+  addLog('err',`Calcul Q${mgCurr+1} : ÉCHEC (réponse: ${mgQuestions[mgCurr].ans})`);
+  mgCurr++;
+  setTimeout(()=>{document.getElementById('mgIn').className='mg-input';mgShowQ();},700);
+}
+
+function mgEnd() {
+  clearInterval(mgInterval);
+  document.getElementById('mgOverlay').classList.remove('show');
+  if(mgOk>=2) {
+    state.calcDone=true;
+    addLog('ok',`Autorisation accordée (${mgOk}/${TOTAL_Q})`);
+    showToast(`✔ Calcul validé — autorisation accordée`);
+    // Remove calc button area (or update checklist)
+    updatePrereqs();
+  } else {
+    addLog('err',`Autorisation refusée (${mgOk}/${TOTAL_Q}) — réessayez`);
+    showToast(`✖ Calcul échoué — recommencez`, true);
+    // Allow retry
   }
-});
+}
 
-note.addEventListener('click',()=>{
-  document.getElementById('screen').classList.add('active');
-  tick(880,0.2,0.08);
-});
-document.getElementById('close').addEventListener('click',()=>{
-  document.getElementById('screen').classList.remove('active');
-});
+// ═══════════════════════════════════════
+//  CALC TRIGGER — patch check-item onclick
+// ═══════════════════════════════════════
+document.getElementById('chk-calc').style.cursor='pointer';
+document.getElementById('chk-calc').title='Cliquer pour lancer le calcul';
+document.getElementById('chk-calc').onclick = function() {
+  if(state.calcDone) return;
+  startCalc();
+};
 
-// init
-updateDots();
+// ═══════════════════════════════════════
+//  DISCORD WEBHOOK
+// ═══════════════════════════════════════
+async function sendWebhook() {
+  const on = state.powerOn;
+  const now = new Date();
+  const ts = now.toISOString();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+
+  const payload = {
+    embeds: [{
+      title: on ? '⚡  ÉLECTRICITÉ RÉTABLIE' : '🔴  COUPURE ÉLECTRIQUE',
+      description: on
+        ? '✅ **L\'alimentation électrique a été rétablie.**\nTous les secteurs du réseau sont de nouveau en ligne.'
+        : '❌ **L\'alimentation électrique vient d\'être coupée.**\nTous les secteurs du réseau sont hors tension.',
+      color: on ? 0x00e87a : 0xff2244,
+      fields: [
+        { name: '📍 Secteur',     value: 'LSEC — Secteur 7',                             inline: true  },
+        { name: '🕐 Heure',       value: `${hh}:${mm}:${ss}`,                            inline: true  },
+        { name: '👤 Opérateur',   value: `Niveau ${state.accessLevel} — Station C7`,     inline: true  },
+        { name: '📊 État réseau', value: on ? '`NOMINAL`' : '`HORS TENSION`',            inline: false },
+      ],
+      footer: { text: 'LSEC Control Panel — Los Santos Energy Corporation' },
+      timestamp: ts,
+    }]
+  };
+  try {
+    const r = await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    addLog(r.ok?'ok':'warn', r.ok ? '📡 Discord notifié avec succès' : '📡 Webhook : erreur envoi');
+  } catch(e) {
+    addLog('warn','📡 Webhook : connexion échouée');
+  }
+}
+
+// ═══════════════════════════════════════
+//  FAIL FLASH
+// ═══════════════════════════════════════
+function flashFailOverlay() {
+  const f = document.getElementById('failFlash');
+  f.style.display = 'block';
+  setTimeout(()=>f.style.display='none', 400);
+}
+
+// ═══════════════════════════════════════
+//  INIT CHECKLIST
+// ═══════════════════════════════════════
+updatePrereqs();
 </script>
 </body>
 </html>
